@@ -2,7 +2,7 @@
 const apiKey = 'REPLACE_WITH_NETLIFY_API_KEY';
 const apiUrl =
 	'https://api.openweathermap.org/data/2.5/weather?units=metric&q=';
-const pollutionApi = 'http://api.openweathermap.org/data/2.5/air_pollution?';
+const pollutionApi = 'https://api.openweathermap.org/data/2.5/air_pollution?';
 const searchInput = document.querySelector('.search input');
 const searchBtn = document.querySelector('.search button');
 const weatherIcon = document.querySelector('.weather-icon');
