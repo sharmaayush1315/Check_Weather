@@ -27,7 +27,6 @@ async function getWeather(city) {
 			document.querySelector('.error').style.display = 'block';
 			document.querySelector('.weather').style.display = 'none';
 		} else {
-			console.log(data, pollutionData);
 			document.querySelector('.city').innerHTML = data.name;
 			document.querySelector('.temp').innerHTML =
 				Math.round(data.main.temp) + ' °C';
