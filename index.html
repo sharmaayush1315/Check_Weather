@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Weather App</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="card">
+			<div class="search">
+				<input type="text" placeholder="Enter city name" spellcheck="false" />
+				<button><img src="resource/images/search.png" /></button>
+			</div>
+			<div class="error">
+				<h4>Invalid city name.</h4>
+			</div>
+			<div class="weather">
+				<img src="resource/images/rain.png" class="weather-icon" />
+				<h1 class="temp">22 °C</h1>
+				<h2 class="pollution">AQI-1</h2>
+				<h2 class="city">Berlin</h2>
+				<div class="details">
+					<div class="col">
+						<img src="resource/images/humidity.png" />
+						<div>
+							<p class="humidity">50%</p>
+							<p>Humidity</p>
+						</div>
+					</div>
+					<div class="col">
+						<img src="resource/images/wind.png" />
+						<div>
+							<p class="wind">15 km/h</p>
+							<p>Wind Speed</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			const apiKey = 'de671f34d2aa83d4ef8702befafc3ffc';
+			const apiUrl =
+				'https://api.openweathermap.org/data/2.5/weather?units=metric&q=';
+			const pollutionApi =
+				'http://api.openweathermap.org/data/2.5/air_pollution?';
+			const searchInput = document.querySelector('.search input');
+			const searchBtn = document.querySelector('.search button');
+			const weatherIcon = document.querySelector('.weather-icon');
+			const pollution = document.querySelector('.pollution');
+			async function getWeather(city) {
+				if (city == '') {
+					const error = document.querySelector('.error');
+					document.querySelector('.error').innerHTML =
+						'Please enter city name.';
+					error.style.display = 'block';
+				} else {
+					const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+					const data = await response.json();
+					const lat = data.coord.lat;
+					const lon = data.coord.lon;
+
+					const pollutionResponse = await fetch(
+						`${pollutionApi}lat=${lat}&lon=${lon}&appid=${apiKey}`
+					);
+					const pollutionData = await pollutionResponse.json();
+					const aqi = pollutionData.list[0].main.aqi;
+					if (response.status == 404 || pollutionResponse.status == 404) {
+						document.querySelector('.error').style.display = 'block';
+						document.querySelector('.weather').style.display = 'none';
+					} else {
+						console.log(data, pollutionData);
+						document.querySelector('.city').innerHTML = data.name;
+						document.querySelector('.temp').innerHTML =
+							Math.round(data.main.temp) + ' °C';
+						document.querySelector('.humidity').innerHTML =
+							data.main.humidity + '%';
+						document.querySelector('.wind').innerHTML =
+							data.wind.speed + ' km/h';
+						const weatherCondition = data.weather[0].main;
+						switch (weatherCondition) {
+							case 'Clouds':
+								weatherIcon.src = 'resource/images/clouds.png';
+								break;
+							case 'Rain':
+								weatherIcon.src = 'resource/images/rain.png';
+								break;
+							case 'Clear':
+								weatherIcon.src = 'resource/images/clear.png';
+								break;
+							case 'Mist':
+								weatherIcon.src = 'resource/images/mist.png';
+								break;
+							case 'Drizzle':
+								weatherIcon.src = 'resource/images/drizzle.png';
+								break;
+
+							default:
+								break;
+						}
+						switch (aqi) {
+							case 1:
+								pollution.innerHTML = `AQI-${aqi} Excellent`;
+								break;
+							case 2:
+								pollution.innerHTML = `AQI-${aqi} Good`;
+								break;
+							case 3:
+								pollution.innerHTML = `AQI-${aqi} Lightly polluted`;
+								break;
+							case 4:
+								pollution.innerHTML = `AQI-${aqi} Moderatory polluted`;
+								break;
+							case 5:
+								pollution.innerHTML = `AQI-${aqi} Heavily polluted`;
+								break;
+							case 6:
+								pollution.innerHTML = `AQI-${aqi} Severely polluted`;
+								break;
+
+							default:
+								break;
+						}
+						document.querySelector('.weather').style.display = 'block';
+						document.querySelector('.error').style.display = 'none';
+					}
+				}
+			}
+			searchInput.addEventListener('keyup', (e) => {
+				if (e.key === 'Enter') {
+					getWeather(searchInput.value);
+				}
+			});
+			searchBtn.addEventListener('click', () => {
+				getWeather(searchInput.value);
+			});
+		</script>
+	</body>
+</html>
