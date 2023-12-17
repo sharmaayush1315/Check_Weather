@@ -1,2 +1,2 @@
 [build]
-  command = "sed -i 's/REPLACE_WITH_NETLIFY_API_KEY/$API_KEY/g' ./main.js"
+  command = "sed -i 's/REPLACE_WITH_NETLIFY_API_KEY/'$API_KEY'/g' ./main.js"
